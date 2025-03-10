@@ -1,0 +1,81 @@
+===== ASSEMBLY SYNTAX =====
+
+==== GENERAL SYNTAX ==== 
+
+All instructions sans headers, flags, and macro definitions, end in a semicolon (;).
+
+==== TOKEN TYPES ====
+
+There are a few types of arguments that the assembler can recognize, each with its own prefix character:
+
+    Instructions do not have a prefix character.
+
+    (.) Headers
+
+        These are for telling the assembler where to look for specific things. There are currently three in use:
+        .macros : Used for defining the macro section. This goes before all other headers.
+        .start  : This is the entry point for the program. Code will begin execution immediately after this line. Goes directly after the .macros header.
+        .end    : Ends the program. The compiler will automatically convert it into a HLT operation if nothing else is specified. Last line in the program.
+
+    ($) Flags
+        
+        These are defined by the user and intended for organizing routines and flow control. Initiating character is a $, and ends at the next whitespace character.
+        Flags can be used as immediate arguments in JMP operations, as the assembler will convert the value directly to the line on which the flag is placed. 
+
+    (_) Macros
+
+        Macros are used in a similar way to a subroutine in functional programming, as a way of abstracting repeated and/or tedious code. Macros are defined as such:
+        _macroName %arg1, %arg2, ..., %argN:
+
+        and followed by the reserved word _end at the end of the declaration.
+
+        Within the macro declaration, the user can use any number of arguments as provided to the macro.
+        All macro arguments in the definition must be prefaced with a (%) character.
+        All other instructions operate as normal within a macro.
+
+        The assembler will copy-paste the definition within a macro to wherever it is called.
+
+
+===== EXAMPLE PROGRAM I: COUNT UP AND DOWN =====
+
+.macros                         // macro definition header
+
+_jumpIf10 %val, %addr:          // define macro "_jumpIf10" with inputs val, and addr.
+
+    ldi a, %val;                // load the value into A
+    sub a, 0d10;                // subtract 10 from A
+    jzr f, %addr;               // if that resulted in a 0, jump to the address (implies A was equal to 10.)
+
+_end;                           // end macro definition
+
+_jumpIf0 %val, %addr:           // define macro "_jumpIf0" with similar inputs and similar definition.
+
+    ldi a, %val;
+    sub a, 0d10;
+    jzr f, %addr;
+
+_end;
+
+.start                          // header indicating start of program
+
+    lda a, 0x0;                 // load a 0 into A
+
+    $countUp                    // countUp flag, for the incrementing loop
+
+    inc a;                      // increment A by 1, store in S
+    _jumpIf10 a, $countDown;    // run jumpif10 macro on A, if a = 10, go to decrement loop.
+    swp a, s;                   // put sum in register A
+    jmp $countUp;               // jump to start of countUp loop
+
+    $countDown                  // countDown flag, for the decrementing loop
+
+    dec a;                      // decrement A.
+    _jumpIf0 a, $end;           // jump to end of program if a = 0.
+    swp a, s;                   // put sum in register A
+    jmp $countDown;             // jump to start of countDown loop
+
+    $end                        // flag for end of program
+
+    hlt;                        // stop the clock and end program
+
+.end                            // also stops the clock and ends program, but needed for the assembler.
