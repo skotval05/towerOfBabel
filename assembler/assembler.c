@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
 enum operation {
 
@@ -54,6 +56,10 @@ enum operation {
     // a secret third op [111]
 };
 
+enum programSection {
+    MACROS, PROGRAM, END
+};
+
 struct macro_arg {
     char * name;
     int value;
@@ -68,21 +74,55 @@ struct macro {
 
 };
 
+const char* delims = " \t\n";
+
 int main(int argc, char* argv[]) {
 
-    short terminalOutput = 0;
-
     // we want 2 args! input file and output file!
-    if (argc != 2) {
-        printf("Incorrect number of arguments - %d is not 2 arguments.", argc);
+    if (argc != 3) {
+        printf("Incorrect number of arguments - %d is not 3 arguments.", argc);
         return -1;
     }
     if (strcmp(argv[1], "hexdump") == 0) {
         // in hexdump mode, output will be the terminal.
-        terminalOutput = 1;
+        #define TERMINAL_OUTPUT
+    } else {
+        #define FILE_OUTPUT
     }
 
-    // parse line by line. Look for the .start header first.
+
+    // make sure arg1 is a valid file.
+    FILE * inputFile = fopen(argv[1], "r");
+    if (inputFile == NULL) {
+        printf("Input file [arg 1] is not a valid file or is not in this directory.");
+        return -1;
+    }
+
+    FILE * outputFile = NULL;
+
+#ifdef FILE_OUTPUT
+
+    outputFile = fopen(argv[2], "w");
+
+    if (inputFile == NULL) {
+
+        printf("Output file [arg 2] was either not created or failed to open.");
+        return -1;
+
+    }
+
+#endif
+
+    // okay, at this point we know we have a valid input and we know where we're going to write to.
+    // Let's break it up into individual characters. Theoretically, we don't need to break it into lines, as long as the semicolons are working properly.
+    
+    // the first word should be ".macros".
+
+    // first lets print out every word in the file to assert that we're reading properly.
+    
+    char * filetext = NULL;
+
+    char * currentWord = strtok(filetext, delims);
     
     //for each line in input file:
     //  remove the whitespace from the line
@@ -95,6 +135,9 @@ int main(int argc, char* argv[]) {
     //  if it is a header, change the state of the program that we're observing.
     //
     //  going to bed. do this later.
+
+    fclose(inputFile);
+    fclose(outputFile);
 
     return 0;
 }
