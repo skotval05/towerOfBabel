@@ -35,47 +35,25 @@ There are a few types of arguments that the assembler can recognize, each with i
 
         The assembler will copy-paste the definition within a macro to wherever it is called.
 
+===== SUBCOUNTER STEPS FOR MULTI-CYCLE INSTRUCTIONS (all of them) =====
 
-===== EXAMPLE PROGRAM I: COUNT UP AND DOWN =====
+Each instruction starts with the same pre-cycle, preparing the instruction decoder for the current instruction and setting the PC to the next value for the next instruction.
+As any given instruction finishes executing, it sets the subcounter back to zero, resetting the process on the recently updated PC.
 
-.macros                         // macro definition header
+Next, it fetches the I-value from the instruction (see specs.txt for info) and adjusts the program counter as necessary.
 
-_jumpIf10 %val, %addr:          // define macro "_jumpIf10" with inputs val, and addr.
+==== PRE-CYCLE ====
 
-    ldi a, %val;                // load the value into A
-    sub a, 0d10;                // subtract 10 from A
-    jzr f, %addr;               // if that resulted in a 0, jump to the address (implies A was equal to 10.)
+RAM[PC] -> IR,      SC+1 -> SC
+RAM[PC+1] -> OP1    SC+1 -> SC
+RAM[PC+2] -> OP2    SC+1 -> SC
 
-_end;                           // end macro definition
+PC+<deterministic value based on, but not equal to, the I-value> -> PC
 
-_jumpIf0 %val, %addr:           // define macro "_jumpIf0" with similar inputs and similar definition.
+==== DUTY CYCLE ====
 
-    ldi a, %val;
-    sub a, 0d10;
-    jzr f, %addr;
+This part of any instruction changes, per instruction.
 
-_end;
+==== POST CYCLE ====
 
-.start                          // header indicating start of program
-
-    lda a, 0x0;                 // load a 0 into A
-
-    $countUp                    // countUp flag, for the incrementing loop
-
-    inc a;                      // increment A by 1, store in S
-    _jumpIf10 a, $countDown;    // run jumpif10 macro on A, if a = 10, go to decrement loop.
-    swp a, s;                   // put sum in register A
-    jmp $countUp;               // jump to start of countUp loop
-
-    $countDown                  // countDown flag, for the decrementing loop
-
-    dec a;                      // decrement A.
-    _jumpIf0 a, $end;           // jump to end of program if a = 0.
-    swp a, s;                   // put sum in register A
-    jmp $countDown;             // jump to start of countDown loop
-
-    $end                        // flag for end of program
-
-    hlt;                        // stop the clock and end program
-
-.end                            // also stops the clock and ends program, but needed for the assembler.
+0x0 -> SC
