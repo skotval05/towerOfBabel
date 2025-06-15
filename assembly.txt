@@ -45,15 +45,138 @@ Next, it fetches the I-value from the instruction (see specs.txt for info) and a
 ==== PRE-CYCLE ====
 
 RAM[PC] -> IR,      SC+1 -> SC
-RAM[PC+1] -> OP1    SC+1 -> SC
-RAM[PC+2] -> OP2    SC+1 -> SC
+RAM[PC+1] -> OP1    SC+1 -> SC      ; if necessary. determined by I-value
+RAM[PC+2] -> OP2    SC+1 -> SC      ; if necessary. determined by I-value
 
 PC+<deterministic value based on, but not equal to, the I-value> -> PC
 
 ==== DUTY CYCLE ====
 
 This part of any instruction changes, per instruction.
+Observe the list below for each instruction's specific operations
+
+=== NOP === [000 000]
+(Nothing. No operation.)
+
+=== HLT === [000 111]
+(Nothing. No operation.)
+
+
+
+=== ADD === [001 000]
+R[A] + R[B] // OPB -> S
+
+=== SUB === [001 001]
+R[A] - R[B] // OPB -> S
+
+=== INC === [001 010]
+R[A] + 1 -> S
+
+=== DEC === [001 011]
+R[A] - 1 -> S
+
+
+
+=== AND === [010 000]
+R[A] & R[B] // OPB -> S
+
+=== ORR === [010 001]
+R[A] | R[B] // OPB -> S
+
+=== NOT === [010 010]
+~ R[A] -> S
+
+=== XOR === [010 011]
+R[A] ^ R[B] // OPB -> S
+
+
+
+=== LSL === [011 000]
+R[A] << 1 -> S
+
+=== LSR === [011 001]
+R[A] >> 1 -> S
+
+=== ASL === [011 010]
+R[A] A<< 1 -> S
+
+=== ASR === [011 011]
+R[A] A>> 1 -> S
+
+
+
+=== JMP === [100 000]
+R[A] // OPA -> PC
+
+=== JZR === [100 001]
+R[A] // OPA -> PC [only if F[0] is high.]
+
+=== JEV === [100 010]
+R[A] // OPA -> PC [only if F[1] is high.]
+
+=== JOF === [100 011]
+R[A] // OPA -> PC [only if F[2] is high.]
+
+=== JNG === [100 100]
+R[A] // OPA -> PC [only if F[3] is high.]
+
+=== JSR === [100 110]
+SP + 1 -> SP
+PC -> M[SP]
+R[A] // OPA -> PC
+
+=== RET === [100 111]
+M[SP] -> PC
+SP - 1 -> SP
+
+
+
+=== PSH === [101 000]
+SP + 1 -> SP
+R[A] // OPA -> M[SP]
+
+=== POP === [101 001]
+M[SP] -> R[A]
+SP - 1 -> SP
+
+=== TOP === [101 010]
+M[SP] -> R[A]
+
+
+
+=== MOV === [110 000]
+R[B] -> R[A]
+
+=== LDA === [110 001]
+M[R[B] // OPB] -> R[A]
+
+=== LDI === [110 010]
+R[B] // OPB -> R[A]
+
+=== STR === [110 011]
+R[B] // OPB -> M[R[A]]
+
+=== SWP === [110 100]
+R[A] -> W
+R[B] -> R[A]
+W -> R[B]
+
+
+
+=== RDX === [111 000]
+X -> R[A]
+
+=== RDY === [111 001]
+Y -> R[A]
+
+=== WRZ === [111 010]
+R[A] // OPA -> Z
+
+=== WRW === [111 011]
+R[A] // OPA -> W
+
 
 ==== POST CYCLE ====
 
-0x0 -> SC
+0x0 -> SC                           ; to reset subcounter and start execution of next instruction
+                                    ; MAX SUBCOUNTER TICKS REQUIRED : 7ish.
