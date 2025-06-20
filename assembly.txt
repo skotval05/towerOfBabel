@@ -120,28 +120,6 @@ R[A] // OPA -> PC [only if F[2] is high.]
 === JNG === [100 100]
 R[A] // OPA -> PC [only if F[3] is high.]
 
-=== JSR === [100 110]
-SP + 1 -> SP
-PC -> M[SP]
-R[A] // OPA -> PC
-
-=== RET === [100 111]
-M[SP] -> PC
-SP - 1 -> SP
-
-
-
-=== PSH === [101 000]
-SP + 1 -> SP
-R[A] // OPA -> M[SP]
-
-=== POP === [101 001]
-M[SP] -> R[A]
-SP - 1 -> SP
-
-=== TOP === [101 010]
-M[SP] -> R[A]
-
 
 
 === MOV === [110 000]

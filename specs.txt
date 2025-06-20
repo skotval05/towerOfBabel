@@ -106,14 +106,9 @@ EXAMPLE OPERATION : [PREFIX] [CODE]
     [011] JOF imm/reg       PC = (F[2] == 1) ? imm/reg : NOP
     [100] JNG imm/reg       PC = (F[3] == 1) ? imm/reg : NOP
       :
-    [110] JSR reg/imm       PUSHES CURRENT PC TO STACK, JUMPS TO ARG ADDRESS
-    [111] RET               POPS TOP STACK ADDRESS, JUMPS THERE.
 
-    = STACK OPS =           PREFIX [101]
+    = <free space> =        PREFIX [101]
 
-    [000] PSH imm/reg       PUSHES VALUE ONTO STACK, INCREMENTS SP
-    [001] POP reg           POPS VALUE OFF STACK, DECREMENTS SP
-    [010] TOP reg           RETRIEVE TOP VALUE OF STACK, NO SP CHANGES
       :
 
     = MEMORY OPS =          PREFIX [110]
