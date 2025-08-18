@@ -40,11 +40,6 @@ enum operation {
     JOF = 100011,
     JNG = 100100,
 
-    // stack ops [101]
-    
-    PSH = 101000,
-    POP = 101001,
-
     // memory ops [110]
     
     MOV = 110000,
