@@ -1,0 +1,150 @@
+============================================================================================================================
+
+                                        EPIC SPECIFICATIONS SHEET FOR THE TOWER OF BABEL
+                                                    an act of cosmic hubris
+                                                      by Scarlett Kotval.
+
+============================================================================================================================
+
+=================================================================
+
+      ACT I: INTRODUCTIONS AND GENERAL SPECIFICATIONS
+
+=================================================================
+
+The Tower of Babel is a 16-bit CPU architecture designed by yours truly.
+Conceptualized in the Summer of 2022.
+
+===== GEN SPEC =====
+
+Architecture:   Von Neumann (single memory bank)
+Bus Width:      16 bits (-32,768 to 32,767 min/max for signed ints, or 65,536 max for unsigned ints)
+ALU ops:        add/subtract, logical and circular shifts left and right, boolean ops AND, OR, NOT, XOR
+Registers:      8 GP registers addressable via load/store/swap/operate commands. A B C D E F G H. simple enough.
+Flow Control:   Absolute jump options (to inst 30) and relative jumping options (forward 30 inst).
+
+===== INSTRUCTION LAYOUT =====
+
+16 bit instruction looks like this
+XXXX XXXX XXXX XXXX
+
+reformat it to allocate bits to different parts of instruction like so
+IIIIII-AAA-BBB-NN-J-X
+
+where the I group represents a six-bit opcode which determines the operation to execute.
+where the A group represents a register for operand A (0 = A, 1 = B, 2 = C, so on)
+where the B group represents a register for operand B (same rules apply here)
+where the N group represents the number of words to increment. (00 = 0, 01 = 1, 10 = 2, 11 = 3). 
+where the J group represents a true/false statement on whether or not the instruction is a jumping one. This is always zero except for some explicit cases in O-group 6.
+where the X group represents nothing, for the moment.
+
+=================================================================
+
+                   ACT II: INSTRUCTION SET
+
+=================================================================
+
+The instruction set is broken up into eight sections, each with eight instructions.
+This splits the I-group above into two subgroups: Overarching and Underarching. (IIIIII -> OOO-UUU)
+Each O-group will be organized so that, when possible, all related U-group values are processed in the same place.
+
+===== O-GROUPS =====
+
+000: Memory Operations
+001: Arithmetic Operations
+010: Logic Operations
+011: Unused
+100: Unused
+101: I/O Operations
+110: Flow Control Operations
+111: Miscellaneous Operations
+
+===== U-GROUPS =====
+
+=== O-GROUP 000 === MEMORY
+
+000: NOP                : No operation.                                                         NN = 01
+001: MOV reg, reg       : Moves value of opA reg into opB reg.                                  NN = 01
+010: LDI imm, reg       : Loads  immediate value (next word) into opA reg.                      NN = 10
+011: LDA imm, reg       : Loads  M[immediate value] into opA reg.                               NN = 10
+100: 
+101: 
+110:  
+111: 
+
+=== O-GROUP 001 === ARITHMETIC
+
+000: ADD regA, regB, regC   : Adds reg values of opA and opB together, stores in regC           NN = 01
+001: ADI imm, regA, regB    : Adds immediate and regA, stores in regC                           NN = 10
+010: LSL regA, regB         : Shifts the value in regA one bit left  into regB                  NN = 01
+011: LSR regA, regB         : Shifts the value in regA one bit right into regB                  NN = 01
+100: SUB regA, regB, regC   : Subtracts opA from opB, and stores in regC.                       NN = 01
+101: SBI imm, regA, regB    : Subtracts immediate value from regA, and stores in regC.          NN = 10
+110: CSL regA, regB         : Shifts the value in regA one bit left  into regB, with wrap.      NN = 01
+111: CSR regA, regB         : Shifts the value in regA one bit right into regB, with wrap.      NN = 01
+
+=== O-GROUP 010 === LOGIC
+
+000: AND regA, regB, regC   : Bitwise AND operation of regs A and B, into regC                  NN = 01
+001: ORR regA, regB, regC   : Bitwise OR  operation of regs A and B, into regC                  NN = 01
+010: NOT regA, regB         : Bitwise NOT operation (inversion) of reg A into regB              NN = 01
+011: XOR regA, regB, regC   : Bitwise XOR operation of regs A and B, into regC                  NN = 01
+100: OVF regA               : Passes OVERFLOW bit from flags register into regA                 NN = 01
+101: NEG regA               : Passes NEGATIVE bit from flags register into regA                 NN = 01
+110: CAR regA               : Passes CARRY    bit from flags register into regA                 NN = 01
+111: ZER regA               : Passes ZERO     bit from flags register into regA                 NN = 01
+
+=== O-GROUP 011 === UNUSED
+
+000: 
+001: 
+010: 
+011: 
+100: 
+101: 
+110: 
+111:
+
+=== O-GROUP 100 === UNUSED
+
+000: 
+001: 
+010: 
+011: 
+100: 
+101: 
+110: 
+111: 
+
+=== O-GROUP 101 === I/O
+
+000: WXR regA           : Writes value in regA to port X
+001: WYR regA           : Writes value in regA to port Y
+010: WXI imm            : Writes immediate value to port X
+011: WYI imm            : Writes immediate value to port Y 
+100: RPX regA           : Reads value from port X into regA
+101: RPY regA           : Reads value from port Y into regA
+110: SPX regA           : Stores value from port X into M[regA]
+111: SPY regA           : Stores value from port Y into M[regA]
+
+=== O-GROUP 110 === FLOW CONTROL
+
+000: JMP 
+001: JIT
+010: AWT
+011: CON
+100: BRN
+101: BRT
+110: 
+111: HLT
+
+=== O-GROUP 111 === MISCELLANEOUS
+
+000: 
+001:
+010:
+011:
+100: 
+101:
+110:
+111: 
