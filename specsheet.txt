@@ -20,24 +20,25 @@ Conceptualized in the Summer of 2022.
 Architecture:   Von Neumann (single memory bank)
 Bus Width:      16 bits (-32,768 to 32,767 min/max for signed ints, or 65,536 max for unsigned ints)
 ALU ops:        add/subtract, logical and circular shifts left and right, boolean ops AND, OR, NOT, XOR
-Registers:      8 GP registers addressable via load/store/swap/operate commands. A B C D E F G H. simple enough.
-Flow Control:   Absolute jump options (to inst 30) and relative jumping options (forward 30 inst).
+Registers:      16 GP registers addressable via load/store/swap/operate commands. A B C D E F G H I J K L M N O P. simple enough.
+Flow Control:   Absolute and relative jumping options, fully polling-based architecture.
 Byte Length:    16 bits.
 
 ===== INSTRUCTION LAYOUT =====
 
-16 bit instruction looks like this
+16 bit instruction looks like this:
 XXXX XXXX XXXX XXXX
 
-reformat it to allocate bits to different parts of instruction like so
-IIIIII-AAA-BBB-NN-J-R
+The distinct partitions of an instruction based on utility are as follows:
+IIIIII-NN-J-XXX XXXX
 
-where the I group represents a six-bit opcode which determines the operation to execute.
-where the A group represents a register for operand A (0 = A, 1 = B, 2 = C, so on)
-where the B group represents a register for operand B (same rules apply here)
-where the N group represents the number of words to increment. (00 = 0, 01 = 1, 10 = 2, 11 = 3). 
-where the J group represents a true/false statement on whether or not the instruction is a jumping one. This is always zero except for some explicit cases in O-group 6.
-where the R group represents a true/false statement on whether or not the instruction is a branching one. We do not care what this is unless J is 1.
+Where the 6-bit I group is the Instruction Opcode,
+      the 2-bit N group is the Number of words to jump to move the stack pointer past the arguments for this instruction and onto the next (usually number of arguments + 1),
+            Given a memory map below:
+            [ADD RGF RGA RGC SWP ... ... ...] - Memory Contents
+            [ ^ .   .   .   .   . ! .   .   ] - Stack Pointer Position
+            it is apparent that the SP must move 4 words ahead to the next instruction. This is variable by instruction, to allow for maximum use of the 
+      the 1-bit J group is the Jump Condition, which is always 0 unless the instruction is a jumping or branching instruction
 
 =================================================================
 
@@ -73,7 +74,7 @@ Each O-group will be organized so that, when possible, all related U-group value
 110: STI regA, imm          : Stores the immediate value into M[regA]                           NN = 10 "STore Immediate"
 111: WII imm1, imm2         : Writes imm2 to M[imm1]                                            NN = 11 "Write Immediate to Immediate"
 
-=== O-GROUP 001 === ARITHMETIC
+=== O-GROUP 001 === ARITHMETIC // implemented
 
 000: ADD regA, regB, regC   : Adds reg values of opB and opC together, stores in regA           NN = 01 "ADD"
 001: ADI regA, regB, imm    : Adds immediate and regB, stores in regA                           NN = 10 "ADd Immediate"
@@ -106,16 +107,16 @@ Each O-group will be organized so that, when possible, all related U-group value
 110: 
 111: 
 
-=== O-GROUP 100 === UNUSED
+=== O-GROUP 100 === EXECUTION STACK MANIPULATION
 
-000: 
-001: 
-010: 
-011: 
-100: 
-101: 
-110: 
-111: 
+000: LOD regA
+001: STR regA
+010: MOV 
+011: XCH
+100: PSH
+101: POP
+110: INP
+111: OUT
 
 === O-GROUP 101 === I/O
 
@@ -142,11 +143,11 @@ Each O-group will be organized so that, when possible, all related U-group value
 === O-GROUP 111 === MISCELLANEOUS
 
 000: NOP                    : Does Nothing                                                      NN = 01 "NO oPeration"
-001:
-010:
+001: DMP REG_P              : Dumps registers A-N sequentially into memory, starting at M[P]    NN = 01 "DuMP"
+010: 
 011:
 100: 
-101:
+101: SCP                    : Loads // get back to this once you have a functional alu you chud
 110:
 111:
 
