@@ -85,7 +85,7 @@ Each O-group will be organized so that, when possible, all related U-group value
 110: CSL regA, regB         : Shifts the value in regA one bit left  into regB, with wrap.      NN = 01 "Circular Shift Left"
 111: CSR regA, regB         : Shifts the value in regA one bit right into regB, with wrap.      NN = 01 "Circular Shift Right"
 
-=== O-GROUP 010 === LOGIC
+=== O-GROUP 010 === LOGIC                                                                                                                   // hardware implemented
 
 000: AND regA, regB, regC   : Bitwise AND operation of regs A and B, into regC                  NN = 01 "AND"
 001: ORR regA, regB, regC   : Bitwise OR  operation of regs A and B, into regC                  NN = 01 "OR"
