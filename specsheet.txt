@@ -63,7 +63,7 @@ Each O-group will be organized so that, when possible, all related U-group value
 
 ===== U-GROUPS =====
 
-=== O-GROUP 000 === MEMORY
+=== O-GROUP 000 === MEMORY                                                                                                                  // hardware implemented
 
 000: MOV regA, regB         : Moves the value at regB into regA                                 NN = 01 "MOVe"
 001: LDA regA, regB         : Loads the value at M[regB] into regA                              NN = 01 "LoaD from Address"
@@ -74,7 +74,7 @@ Each O-group will be organized so that, when possible, all related U-group value
 110: STI regA, imm          : Stores the immediate value into M[regA]                           NN = 10 "STore Immediate"
 111: WII imm1, imm2         : Writes imm2 to M[imm1]                                            NN = 11 "Write Immediate to Immediate"
 
-=== O-GROUP 001 === ARITHMETIC // implemented
+=== O-GROUP 001 === ARITHMETIC                                                                                                              // hardware implemented
 
 000: ADD regA, regB, regC   : Adds reg values of opB and opC together, stores in regA           NN = 01 "ADD"
 001: ADI regA, regB, imm    : Adds immediate and regB, stores in regA                           NN = 10 "ADd Immediate"
