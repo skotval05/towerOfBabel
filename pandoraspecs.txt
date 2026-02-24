@@ -1,0 +1,47 @@
+===== PANDORA LANGUAGE MANUAL ======
+
+(a lot of this structure is ~~taken~~ borrowed from the Lua manual, I like that manual and it is cute :D anyway, here we go.)
+
+Index:
+    1.      Introduction
+    
+    2.      Basic Concepts
+    2.a     Program Structure
+    2.b     Values and Types
+    2.c     Scopes and Variables
+    2.d     Error Handling
+    2.e     Reserved Words
+
+    3.      The Language
+    3.a     Lexical Conventions
+    3.b     Variables
+    3.c     Statements and Expressions
+
+    4.      The Compiler
+    4.a     C-Compiler Options
+
+==== 1: Introduction ====
+//TODO: describe the language and. whatever.
+// get on this maybe last? once the language is well-defined.
+
+Stylized with a lowercase 'p', pandora is a linear, structured, imperative programming language built for the Tower of Babel.
+Programs in plaintext are saved with the file extension .pan, and the output of the compiler can be a series of different files. The most obvious use is a binary file, but the compiler can also provide hexadecimal byte-wise and word-wise files, as well as assembly code in plaintext.
+
+==== 2: Basic Concepts ====
+
+This section describes the basic concepts of the language.
+
+=== 2.a: Program Structure ===
+A complete pandora file is a list of instructions. The entry point is defined by the .start flag, and theprogram will begin execution at the line directly following. A program is  
+
+=== 2.b: Values and Types ===
+//TODO
+
+=== 2.c: Scopes and Variables ===
+//TODO
+
+=== 2.d: Error Handling ===
+//TODO
+
+=== 2.e: Reserved Words ===
+//TODO

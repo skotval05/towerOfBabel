@@ -36,7 +36,7 @@ Where the 6-bit I group is the Instruction Opcode,
       the 2-bit N group is the Number of words to jump to move the stack pointer past the arguments for this instruction and onto the next (usually number of arguments + 1),
             Given a memory map below:
             [ADD RGF RGA RGC SWP ... ... ...] - Memory Contents
-            [ ^ .   .   .   .   . ! .   .   ] - Stack Pointer Position
+            [ ^ .   .   .   . ! .   .   .   ] - Stack Pointer Position
             it is apparent that the SP must move 4 words ahead to the next instruction. This is variable by instruction, to allow for maximum use of the 
       the 1-bit J group is the Jump Condition, which is always 0 unless the instruction is a jumping or branching instruction
 
@@ -157,7 +157,7 @@ Each O-group will be organized so that, when possible, all related U-group value
 
 =================================================================
 
-Consider that each operation may take up to eight clock cycles. This is decided arbitrarily because I do not feel like implementing a 4 bit counter. get trolled.
+Consider that each operation may take up to sixteen clock cycles. This is decided arbitrarily because sixteen sounds like a pretty good number for computer stuff.
 
 Each clock cycle is referred to by a three bit code. 
 It is implied that alongside each list of operations, the subcounter increments.
