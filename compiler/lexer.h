@@ -42,4 +42,6 @@ void appendCharToWord(word *w, char c);
 void appendWordToLine(line *l, word w);
 void appendLineToProg(program *p, line l);
 
+void appendTokenToList(tokenList *tl, token t);
+
 #endif

@@ -25,7 +25,7 @@ program readFile(char *filename) {
 
   // do things here
 
-  char ch;
+  int ch;
 
   line currentLine;
   currentLine.words = NULL;
@@ -38,11 +38,13 @@ program readFile(char *filename) {
   while ((ch = fgetc(f)) != EOF) {
     // check if we receive a semicolon
     if (ch == ';') {
+      //      printf("found a semicolon.\n");
       //    to break into lines
       //    make semicolon its own word, though
 
       // append current word to line
-      appendWordToLine(&currentLine, currentWord);
+      if (currentWord.length != 0)
+        appendWordToLine(&currentLine, currentWord);
 
       // add semicolon as its own word for ease of lexer
       word stop;
@@ -52,32 +54,39 @@ program readFile(char *filename) {
       appendWordToLine(&currentLine, stop);
 
       // append current line to program
-      appendLineToProg(&p, currentLine);
+      if (currentLine.length != 0)
+        appendLineToProg(&p, currentLine);
 
       // clean up current word and line.
-      free(currentLine.words);
+      //      free(currentLine.words);
       currentLine.length = 0;
       currentLine.words = NULL;
-      free(currentWord.chars);
+
+      //      free(currentWord.chars);
       currentWord.length = 0;
       currentWord.chars = NULL;
     }
 
     // then check if we receive a space
-    if (ch == ' ' || ch == '\t' || ch == '\n') {
+    else if (ch == ' ' || ch == '\t' || ch == '\n') {
+      //      printf("found a whitespace character\n");
       //    to break into words
 
       // do not add space character to word.
-      appendWordToLine(&currentLine, currentWord);
+      if (currentWord.length != 0)
+        appendWordToLine(&currentLine, currentWord);
 
       // clean up current word.
-      free(currentWord.chars);
+      //      free(currentWord.chars);
       currentWord.chars = NULL;
       currentWord.length = 0;
     }
 
     // if neither, append to the current word
-    appendCharToWord(&currentWord, ch);
+    else {
+      //      printf("found a regular character\n");
+      appendCharToWord(&currentWord, ch);
+    }
   }
 
   return p;
@@ -86,7 +95,7 @@ program readFile(char *filename) {
 tokenList lex(program p);
 
 void appendCharToWord(word *w, char c) {
-  char *temp = realloc(w->chars, w->length + 1);
+  char *temp = realloc(w->chars, (w->length + 1) * sizeof(char));
   if (temp == NULL)
     return;
   w->chars = temp;
@@ -96,7 +105,7 @@ void appendCharToWord(word *w, char c) {
 }
 
 void appendWordToLine(line *l, word w) {
-  word *temp = realloc(l->words, l->length + 1);
+  word *temp = realloc(l->words, (l->length + 1) * sizeof(word));
   if (temp == NULL)
     return;
   l->words = temp;
@@ -106,11 +115,21 @@ void appendWordToLine(line *l, word w) {
 }
 
 void appendLineToProg(program *p, line l) {
-  line *temp = realloc(p->lines, p->length + 1);
+  line *temp = realloc(p->lines, (p->length + 1) * sizeof(line));
   if (temp == NULL)
     return;
   p->lines = temp;
   p->lines[p->length] = l;
   p->length += 1;
+  return;
+}
+
+void appendTokenToList(tokenList *tl, token t) {
+  token *temp = realloc(tl->tokens, (tl->length + 1) * sizeof(token));
+  if (temp == NULL)
+    return;
+  tl->tokens = temp;
+  tl->tokens[tl->length] = t;
+  tl->length += 1;
   return;
 }

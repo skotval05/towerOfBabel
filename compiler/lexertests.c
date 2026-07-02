@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "lexer.h"
 
@@ -89,6 +90,8 @@ int main() {
 
   appendLineToProg(&p, l);
 
+  // printf("can append a line to program");
+
   assert(p.lines != NULL);
   assert(p.length == 1);
 
@@ -119,6 +122,8 @@ int main() {
   appendCharToWord(&w5, 's');
 
   line l2;
+  l2.words = NULL;
+  l2.length = 0;
 
   appendWordToLine(&l2, w3);
   appendWordToLine(&l2, w4);
@@ -162,6 +167,99 @@ int main() {
   assert(p.lines[1].words[2].chars[2] == 't');
   assert(p.lines[1].words[2].chars[3] == 's');
 
+  /////////////////////////////////////////////////////////////////
+
+  // Test file is built as follows:
+  // LINE COUNT: 4
+  // LINE 1 WORD COUNT: 5
+  // LINE 2 WORD COUNT: 4
+  // LINE 3 WORD COUNT: 2
+  // LINE 4 WORD COUNT: 6
+  //
+  //
+  // there are words here;
+  // semicolons break lines;
+  // sometimes; they may look like this;
+
+  printf("Testing file text extraction to program structure\n");
+
+  char *filename = "testFile.txt";
+  program outProgram;
+
+  outProgram.lines = NULL;
+  outProgram.length = 0;
+
+  assert(outProgram.lines == NULL);
+  assert(outProgram.length == 0);
+
+  printf("can init program.\n");
+
+  outProgram = readFile(filename);
+
+  printf("readfile completed\n");
+
+  assert(outProgram.lines != NULL);
+  assert(outProgram.length == 4);
+
+  assert(outProgram.lines[0].words != NULL);
+
+  assert(outProgram.lines[0].length == 5);
+  assert(outProgram.lines[1].length == 4);
+  assert(outProgram.lines[2].length == 2);
+  assert(outProgram.lines[3].length == 6);
+
+  /////////////////////////////////////////////////////////////////
+
+  // second test file testFileTwo.txt
+  //
+  // lets try    lots of spaces;
+  // or perhaps a line
+  // split with a whitespace;
+  // and now a few semicolons in a row;;;
+  //
+  // LINE COUNT: 5
+  // LINE 1 WORD COUNT: 6
+  // LINE 2 WORD COUNT: 9
+  // LINE 3 WORD COUNT: 9
+  // LINE 4 WORD COUNT: 1
+  // LINE 5 WORD COUNT: 1
+
+  printf("second file tests\n");
+
+  char *secondFileName = "testFileTwo.txt";
+
+  program secondTestProgram;
+
+  secondTestProgram.lines = NULL;
+  secondTestProgram.length = 0;
+
+  secondTestProgram = readFile(secondFileName);
+
+  assert(secondTestProgram.lines != NULL);
+  assert(secondTestProgram.length == 5);
+
+  assert(secondTestProgram.lines[0].length == 6);
+  assert(secondTestProgram.lines[1].length == 9);
+  assert(secondTestProgram.lines[2].length == 9);
+  assert(secondTestProgram.lines[3].length == 1);
+  assert(secondTestProgram.lines[4].length == 1);
+
+  printf("All program construction tests complete.\n");
+
+  /////////////////////////////////////////////////////////////////
+
+  printf("Testing token creation\n");
+
+  token t;
+  t.name = "TEST";
+  t.type = NONE;
+  t.value = NULL;
+
+  assert(strcmp(t.name, "TEST") == 0);
+  assert(t.type == NONE);
+  assert(t.value == NULL);
+
+  /////////////////////////////////////////////////////////////////
   printf("All tests passed.\n");
   return 0;
 }
